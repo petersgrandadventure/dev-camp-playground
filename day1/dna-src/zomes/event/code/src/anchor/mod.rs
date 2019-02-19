@@ -47,6 +47,18 @@ pub fn anchor_definition() -> ValidatingEntryType {
                     Ok(())
                 }
             )
+             to!(
+                "challenge",
+                tag: "challenge",
+
+                validation_package: || {
+                    hdk::ValidationPackageDefinition::Entry
+                },
+
+                validation: |_base: Address, _target: Address, _ctx: hdk::ValidationData| {
+                    Ok(())
+                }
+            )
         ]
     )
 }

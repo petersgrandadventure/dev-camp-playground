@@ -9,9 +9,17 @@ const scenario = new Scenario([instanceAlice])
 /*----------  Events  ----------*/
 
 
-const testNewChannelParams = {
+const testNewEventParams = {
   name: "test new event",
   description: "for testing...",
+  initial_members: [],
+  public: true
+}
+
+const testNewChallengeParams = {
+  title: "test new challenge",
+  description: "for testing...",
+  end_date: "never",
   initial_members: [],
   public: true
 }
@@ -39,7 +47,7 @@ scenario.runTape('Can create a public event with no other members and retrieve i
   console.log(register_result)
   t.true(register_result.Ok.includes('alice'))
 
-  const create_result = await alice.callSync('event', 'create_event', testNewChannelParams)
+  const create_result = await alice.callSync('event', 'create_event', testNewEventParams)
   console.log(create_result)
   t.deepEqual(create_result.Ok.length, 46)
 
@@ -60,7 +68,7 @@ scenario.runTape('Can post a message to the event and retrieve', async (t, {alic
   console.log(register_result)
   t.true(register_result.Ok.includes('alice'))
 
-  const create_result = await alice.callSync('event', 'create_event', testNewChannelParams)
+  const create_result = await alice.callSync('event', 'create_event', testNewEventParams)
   console.log(create_result)
   const event_addr = create_result.Ok
   t.deepEqual(event_addr.length, 46)
@@ -84,7 +92,7 @@ scenario.runTape('Can create a public event with some members', async (t, {alice
   console.log(register_result)
   t.true(register_result.Ok.includes('alice'))
 
-  const create_result = await alice.callSync('event', 'create_event', {...testNewChannelParams, public: false, initial_members: [register_result.Ok]})
+  const create_result = await alice.callSync('event', 'create_event', {...testNewEventParams, public: false, initial_members: [register_result.Ok]})
   console.log(create_result)
   t.deepEqual(create_result.Ok.length, 46)
 
@@ -92,6 +100,20 @@ scenario.runTape('Can create a public event with some members', async (t, {alice
   console.log('all members:', get_all_members_result)
   let allMemberAddrs = get_all_members_result.Ok
   t.true(allMemberAddrs.length > 0, 'gets at least one member')
+})
+
+scenario.runTape('Can create a challenge with some members', async (t, {alice}) => {
+  try {
+    const register_result = await alice.callSync('event', 'register', {name: 'alice', avatar_url: ''})
+    console.log(register_result)
+    t.true(register_result.Ok.includes('alice'))
+
+    const create_result = await alice.callSync('event', 'create_challenge', {...testNewChallengeParams, public: false, initial_members: [register_result.Ok]})
+    console.log(create_result)
+    t.deepEqual(create_result.Ok.length, 46)
+  } catch (err) {
+    t.fail(err.message);
+  }
 })
 
 

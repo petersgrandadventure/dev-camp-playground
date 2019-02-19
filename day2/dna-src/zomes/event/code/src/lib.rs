@@ -19,8 +19,9 @@ use hdk::holochain_core_types::{
 };
 
 mod anchor;
-mod message;
+mod challenge;
 mod event;
+mod message;
 mod member;
 mod utils;
 
@@ -30,7 +31,8 @@ define_zome! {
 		message::message_definition(),
     	event::public_event_definition(),
         member::profile_definition(),
-        anchor::anchor_definition()
+        anchor::anchor_definition(),
+		challenge::challenge_definition()
 	]
 
     genesis: || {
@@ -50,15 +52,30 @@ define_zome! {
 			outputs: |result: ZomeApiResult<Address>|,
 			handler: event::handlers::handle_create_event
 		}
+		create_challenge: {
+			inputs: |title: String, description: String, end_date:String, initial_members: Vec<Address>|,
+			outputs: |result: ZomeApiResult<Address>|,
+			handler: challenge::handlers::handle_create_challenge
+		}
 		join_event: {
 		    inputs: |event_address: HashString|,
 		    outputs: |result: ZomeApiResult<()>|,
 		    handler: event::handlers::handle_join_event
 		}
+		join_challenge: {
+		    inputs: |event_address: HashString|,
+		    outputs: |result: ZomeApiResult<()>|,
+		    handler: challenge::handlers::handle_join_challenge
+		}
 		get_all_public_events: {
 			inputs: | |,
 			outputs: |result: ZomeApiResult<utils::GetLinksLoadResult<event::Event>>|,
 			handler: event::handlers::handle_get_all_public_events
+		}
+		get_all_challenges: {
+			inputs: | |,
+			outputs: |result: ZomeApiResult<utils::GetLinksLoadResult<challenge::Challenge>>|,
+			handler: challenge::handlers::handle_get_all_challenges
 		}
 		get_members: {
 			inputs: |event_address: HashString|,
@@ -91,8 +108,11 @@ define_zome! {
 	        hc_public [
 	        	register,
 	        	create_event,
+				create_challenge,
 	        	join_event,
+				join_challenge,
 	        	get_all_public_events,
+				get_all_challenges,
 	        	get_members,
 	        	get_member_profile,
 	        	get_my_member_profile,

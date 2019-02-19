@@ -1,31 +1,56 @@
-use hdk::entry_definition::ValidatingEntryType;
+use hdk::{
+    self,
+    entry_definition::ValidatingEntryType,
+    holochain_core_types::error::HolochainError,
+    holochain_core_types::json::JsonString,
+};
 
 use hdk::holochain_core_types::{
     dna::entry_types::Sharing,
     cas::content::Address,
-    json::RawString,
 };
 
+pub mod handlers;
 
-pub fn anchor_definition() -> ValidatingEntryType {
+#[derive(Serialize, Deserialize, Debug, Clone, DefaultJson)]
+pub struct Challenge {
+    pub title: String,
+    pub description: String,
+    pub end_date: String,
+}
+
+
+pub fn challenge_definition() -> ValidatingEntryType {
     entry!(
-        name: "anchor",
-        description: "",
+        name: "challenge",
+        description: "A challenge in which anyone can participate and post ideas",
         sharing: Sharing::Public,
-        native_type: RawString,
+        native_type: Challenge,
 
         validation_package: || {
             hdk::ValidationPackageDefinition::Entry
         },
 
-        validation: |_name: RawString, _ctx: hdk::ValidationData| {
+        validation: |_challenge: Challenge, _ctx: hdk::ValidationData| {
             Ok(())
         },
 
         links: [
             to!(
                 "%agent_id",
-                tag: "member_tag",
+                tag: "has_member",
+
+                validation_package: || {
+                    hdk::ValidationPackageDefinition::Entry
+                },
+
+                validation: |_base: Address, _target: Address, _ctx: hdk::ValidationData| {
+                    Ok(())
+                }
+            ),
+            from!(
+                "%agent_id",
+                tag: "member_of",
 
                 validation_package: || {
                     hdk::ValidationPackageDefinition::Entry
@@ -36,20 +61,8 @@ pub fn anchor_definition() -> ValidatingEntryType {
                 }
             ),
             to!(
-                "public_event",
-                tag: "public_event",
-
-                validation_package: || {
-                    hdk::ValidationPackageDefinition::Entry
-                },
-
-                validation: |_base: Address, _target: Address, _ctx: hdk::ValidationData| {
-                    Ok(())
-                }
-            ),
-            to!(
-                "challenge",
-                tag: "challenge",
+                "message",
+                tag: "message_in",
 
                 validation_package: || {
                     hdk::ValidationPackageDefinition::Entry
