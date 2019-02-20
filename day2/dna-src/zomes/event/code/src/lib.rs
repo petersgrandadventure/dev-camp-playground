@@ -24,15 +24,17 @@ mod event;
 mod message;
 mod member;
 mod utils;
+mod idea;
 
 define_zome! {
 
 	entries: [
-		message::message_definition(),
+		anchor::anchor_definition(),
+		challenge::challenge_definition(),
+		idea::idea_definition(),
     	event::public_event_definition(),
         member::profile_definition(),
-        anchor::anchor_definition(),
-		challenge::challenge_definition()
+		message::message_definition()
 	]
 
     genesis: || {
@@ -57,15 +59,25 @@ define_zome! {
 			outputs: |result: ZomeApiResult<Address>|,
 			handler: challenge::handlers::handle_create_challenge
 		}
+		create_idea: {
+			inputs: |title: String, description: String, challenge_address: HashString|,
+			outputs: |result: ZomeApiResult<Address>|,
+			handler: idea::handlers::handle_create_idea
+		}
 		join_event: {
 		    inputs: |event_address: HashString|,
 		    outputs: |result: ZomeApiResult<()>|,
 		    handler: event::handlers::handle_join_event
 		}
 		join_challenge: {
-		    inputs: |event_address: HashString|,
+		    inputs: |challenge_address: HashString|,
 		    outputs: |result: ZomeApiResult<()>|,
 		    handler: challenge::handlers::handle_join_challenge
+		}
+		join_idea: {
+		    inputs: |idea_address: HashString|,
+		    outputs: |result: ZomeApiResult<()>|,
+		    handler: idea::handlers::handle_join_idea
 		}
 		get_all_public_events: {
 			inputs: | |,
@@ -76,6 +88,11 @@ define_zome! {
 			inputs: | |,
 			outputs: |result: ZomeApiResult<utils::GetLinksLoadResult<challenge::Challenge>>|,
 			handler: challenge::handlers::handle_get_all_challenges
+		}
+		get_all_ideas: {
+			inputs: | |,
+			outputs: |result: ZomeApiResult<utils::GetLinksLoadResult<idea::Idea>>|,
+			handler: idea::handlers::handle_get_all_ideas
 		}
 		get_members: {
 			inputs: |event_address: HashString|,
@@ -109,10 +126,13 @@ define_zome! {
 	        	register,
 	        	create_event,
 				create_challenge,
+				create_idea,
 	        	join_event,
 				join_challenge,
+				join_idea,
 	        	get_all_public_events,
 				get_all_challenges,
+				get_all_ideas,
 	        	get_members,
 	        	get_member_profile,
 	        	get_my_member_profile,

@@ -23,7 +23,10 @@ const testNewChallengeParams = {
   initial_members: [],
   public: true
 }
-
+const testNewIdeaParams = {
+  title: "test new idea",
+  description: "for testing...",
+}
 const testMessage = {
   timestamp: 0,
   message_type: "text",
@@ -102,18 +105,21 @@ scenario.runTape('Can create a public event with some members', async (t, {alice
   t.true(allMemberAddrs.length > 0, 'gets at least one member')
 })
 
-scenario.runTape('Can create a challenge with some members', async (t, {alice}) => {
+scenario.runTape('Can create a challenge with an idea', async (t, {alice}) => {
   try {
     const register_result = await alice.callSync('event', 'register', {name: 'alice', avatar_url: ''})
     console.log(register_result)
     t.true(register_result.Ok.includes('alice'))
 
-    const create_result = await alice.callSync('event', 'create_challenge', {...testNewChallengeParams, public: false, initial_members: [register_result.Ok]})
+    const create_result = await alice.callSync('event', 'create_challenge', {...testNewChallengeParams, initial_members: [register_result.Ok]})
     console.log(create_result)
     t.deepEqual(create_result.Ok.length, 46)
+
+    const create_idea_result = await alice.callSync('event', 'create_idea', {...testNewIdeaParams, challenge_address: create_result.Ok}) 
+    console.log(create_idea_result);
+    t.deepEqual(create_idea_result.Ok.length, 46)
+
   } catch (err) {
     t.fail(err.message);
   }
 })
-
-
