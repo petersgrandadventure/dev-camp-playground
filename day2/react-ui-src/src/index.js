@@ -5,7 +5,9 @@ import { connect } from '@holochain/hc-web-client'
 
 import { UserHeader } from './components/UserHeader'
 import { EventList } from './components/EventList'
+import { ChallengeList } from './components/ChallengeList'
 import { CreateEventForm } from './components/CreateEventForm'
+import { CreateChallengeForm } from './components/CreateChallengeForm'
 import { WelcomeScreen } from './components/WelcomeScreen'
 import { RegisterScreen } from './components/RegisterScreen'
 
@@ -36,6 +38,8 @@ class View extends React.Component {
       users: {},
       event: {},
       events: [],
+      challenge: {},
+      challenges: [],
       messages: {},
       sidebarOpen: false
     }
@@ -54,6 +58,7 @@ class View extends React.Component {
       setUser: user => {
         this.setState({ user })
         this.actions.getEvents()
+        this.actions.getChallenges()
       },
 
       // --------------------------------------
@@ -64,6 +69,13 @@ class View extends React.Component {
         this.setState({ event, sidebarOpen: false })
         this.actions.getMessages(event.id)
         this.actions.getEventMembers(event.id)
+        this.actions.scrollToEnd()
+      },
+
+      setChallenge: challenge => {
+        this.setState({ challenge, sidebarOpen: false })
+        this.actions.getMessages(challenge.id)
+        this.actions.getEventMembers(challenge.id)
         this.actions.scrollToEnd()
       },
 
@@ -141,7 +153,25 @@ class View extends React.Component {
           this.actions.getEvents()
         })
       },
-
+      createChallenge: options => {
+        const challengeSpec = {
+          title: options.title,
+          description: options.description,
+          end_date: options.end_date,
+          initial_members: []
+        }
+        this.makeHolochainCall(`${instanceID}/event/create_challenge`, challengeSpec, (result) => {
+          console.log('created challenge', result)
+          this.actions.setChallenge({
+            id: result.Ok,
+            title: options.title,
+            description: options.description,
+            end_date: options.end_date,
+            users: []
+          })
+          this.actions.getChallenges()
+        })
+      },
       getUserProfile: userId => {
         this.makeHolochainCall(`${instanceID}/event/get_member_profile`, { agent_address: userId }, (result) => {
           console.log('retrieved profile', result)
@@ -165,6 +195,24 @@ class View extends React.Component {
           })
           this.setState({
             events
+          })
+        })
+      },
+
+      getChallenges: () => {
+        this.makeHolochainCall(`${instanceID}/event/get_all_challenges`, {}, (result) => {
+          console.log('retrieved challenges', result)
+          let challenges = result.Ok.map(({ address, entry }) => {
+            return {
+              id: address,
+              end_date: !entry.end_date,
+              title: entry.title,
+              description: entry.description,
+              users: []
+            }
+          })
+          this.setState({
+            challenges
           })
         })
       },
@@ -214,7 +262,9 @@ class View extends React.Component {
       events,
       messages,
       sidebarOpen,
-      connected
+      connected,
+      challenge,
+      challenges,
     } = this.state
     const { createEvent, registerUser } = this.actions
 
@@ -230,6 +280,16 @@ class View extends React.Component {
             events={events}
             messages={messages}
             current={event}
+            actions={this.actions}
+          />}
+          {user.id && <CreateChallengeForm submit={this.actions.createChallenge} />}
+          {user.id && <ChallengeList
+            state={this.state}
+            user={user}
+            users={users}
+            challenges={challenges}
+            messages={messages}
+            current={challenge}
             actions={this.actions}
           />}
           { connected ? (
