@@ -55,6 +55,11 @@ define_zome! {
 		    outputs: |result: ZomeApiResult<()>|,
 		    handler: event::handlers::handle_join_event
 		}
+		leave_event: {
+		    inputs: |event_address: HashString|,
+		    outputs: |result: ZomeApiResult<()>|,
+		    handler: event::handlers::handle_leave_event
+		}
 		get_all_public_events: {
 			inputs: | |,
 			outputs: |result: ZomeApiResult<utils::GetLinksLoadResult<event::Event>>|,
@@ -92,6 +97,7 @@ define_zome! {
 	        	register,
 	        	create_event,
 	        	join_event,
+            	leave_event,
 	        	get_all_public_events,
 	        	get_members,
 	        	get_member_profile,

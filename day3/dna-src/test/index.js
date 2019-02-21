@@ -78,7 +78,7 @@ scenario.runTape('Can post a message to the event and retrieve', async (t, {alic
   t.deepEqual(get_message_result.Ok[0].entry.payload, testMessage.payload, 'expected to receive the message back')
 })
 
-scenario.runTape('Can create a public event with some members', async (t, {alice}) => {
+scenario.runTape('Can create a public event with some members that can leave if they want', async (t, {alice}) => {
 
   const register_result = await alice.callSync('event', 'register', {name: 'alice', avatar_url: ''})
   console.log(register_result)
@@ -92,6 +92,16 @@ scenario.runTape('Can create a public event with some members', async (t, {alice
   console.log('all members:', get_all_members_result)
   let allMemberAddrs = get_all_members_result.Ok
   t.true(allMemberAddrs.length > 0, 'gets at least one member')
+
+  const leave_result = await alice.callSync('event', 'leave_event', {event_address: create_result.Ok})
+  console.log(leave_result)
+  t.deepEqual(create_result.Ok.length, 46)
+
+  const get_all_members_result_post_leaving = await alice.callSync('event', 'get_members', {event_address: create_result.Ok})
+  console.log('all members:', get_all_members_result_post_leaving)
+  let allMemberAddrsPost = get_all_members_result_post_leaving.Ok
+  t.true(allMemberAddrsPost.length == 0, 'has no members!')
+  
 })
 
 

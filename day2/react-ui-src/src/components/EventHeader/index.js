@@ -9,7 +9,7 @@ export const EventHeader = ({
   return (
     <header className={style.component}>
       {attendingCurrent ?
-        <div>You're Attending</div>
+         <div onClick={() => leaveEvent(event)}>You're Attending (leave) </div>
         : <div onClick={() => joinEvent(event)}>Attend</div>}
       <row->
         <h1>{event.name && event.name.replace(user.id, '')}</h1>

@@ -51,6 +51,12 @@ pub fn handle_join_event(event_address: HashString) -> ZomeApiResult<()> {
     Ok(())
 }
 
+pub fn handle_leave_event(event_address: HashString) -> ZomeApiResult<()> {
+    hdk::remove_link(&AGENT_ADDRESS, &event_address, "member_of");
+    hdk::remove_link(&event_address, &AGENT_ADDRESS, "has_member");
+    Ok(())
+}
+
 pub fn handle_get_members(address: HashString) -> ZomeApiResult<Vec<Address>> {
     let all_member_ids = hdk::get_links(&address, "has_member")?.addresses().to_owned();
     Ok(all_member_ids)

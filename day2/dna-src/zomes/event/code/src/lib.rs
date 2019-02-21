@@ -69,6 +69,11 @@ define_zome! {
 		    outputs: |result: ZomeApiResult<()>|,
 		    handler: event::handlers::handle_join_event
 		}
+		leave_event: {
+		    inputs: |event_address: HashString|,
+		    outputs: |result: ZomeApiResult<()>|,
+		    handler: event::handlers::handle_leave_event
+		}
 		join_challenge: {
 		    inputs: |challenge_address: HashString|,
 		    outputs: |result: ZomeApiResult<()>|,
@@ -128,6 +133,7 @@ define_zome! {
 				create_challenge,
 				create_idea,
 	        	join_event,
+				leave_event,
 				join_challenge,
 				join_idea,
 	        	get_all_public_events,

@@ -86,7 +86,13 @@ class View extends React.Component {
           console.log('joined event', result)
         })
       },
-
+      leaveEvent: event => {
+        console.log('leaving event')
+        this.actions.setEvent(event)
+        this.makeHolochainCall(`${instanceID}/event/leave_event`, { event_address: event.id }, (result) => {
+          console.log('left event', result)
+        })
+      },
       getEventMembers: eventId => {
         this.makeHolochainCall(`${instanceID}/event/get_members`, {
           event_address: eventId
