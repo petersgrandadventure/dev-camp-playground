@@ -1,11 +1,9 @@
 import React from 'react'
 import style from './index.module.css'
-import { ChallengeHeader } from '../ChallengeHeader'
+import { IdeaHeader } from '../IdeaHeader'
 import { UserList } from '../UserList'
-import { IdeaList } from '../IdeaList'
 import { MessageList } from '../MessageList'
 import { CreateMessageForm } from '../CreateMessageForm'
-import { CreateIdeaForm } from '../CreateIdeaForm' 
 
 const Icon = id => (
   id === 'lock' ? <svg id="lock" viewBox="0 0 24 24">
@@ -17,66 +15,53 @@ const Icon = id => (
   </svg>
 )
 
-export const ChallengeList = ({
+export const IdeaList = ({
   state,
-  challenges = [],
+  ideas = [],
   user,
   users,
   messages,
-  ideas,
   current,
   actions
 }) => (
     <ul className={style.component}>
-      {challenges.map(challenge => {
+      {ideas.map(idea => {
         const attendingCurrent = current.users ? current.users.find(x => x === user.id) : false
 
         let renderResult = []
 
-        // a little preview of the challenge
+        // a little preview of the idea
         // click to expand
-        if (challenge.id !== current.id) {
+        if (idea.id !== current.id) {
           renderResult.push(<li
-            key={challenge.id}
-            disabled={challenge.id === current.id}
-            onClick={e => actions.setChallenge(challenge)}
+            key={idea.id}
+            disabled={idea.id === current.id}
+            onClick={e => actions.setIdea(idea)}
           >
-            {Icon(challenge.isPrivate ? 'lock' : 'public')}
+            {Icon(idea.isPrivate ? 'lock' : 'public')}
             <col->
-              <p>{challenge.title.replace(user.id, '')}</p>
-              <span>{challenge.description}</span>
-              <span>{challenge.end_date}</span>
+              <p>{idea.title.replace(user.id, '')}</p>
+              <span>{idea.description}</span>
             </col->
           </li>)
         }
 
-        // the expanded view of the selected challenge
-        if (challenge.id === current.id) {
-          renderResult.push(<li key={'openHeader' + challenge.id} className={style.openEvent}>
-            <ChallengeHeader state={state} actions={actions} />
+        // the expanded view of the selected idea
+        if (idea.id === current.id) {
+          renderResult.push(<li key={'openHeader' + idea.id} className={style.openEvent}>
+            <IdeaHeader state={state} actions={actions} />
           </li>)
-          renderResult.push(<li key={'openPanel' + challenge.id} className={style.openEvent}>
+          renderResult.push(<li key={'openPanel' + idea.id} className={style.openEvent}>
             <col->
               <h3>Description</h3>
-              <h5>{challenge.description}</h5>
+              <h5>{idea.description}</h5>
               {attendingCurrent && <MessageList
                 user={user}
                 users={users}
-                messages={messages[challenge.id]}
+                messages={messages[idea.id]}
               />}
               {attendingCurrent &&
-                <CreateMessageForm challengeId={current ? current.id : false} actions={actions} />}
-            </col->
-            {user.id && <CreateIdeaForm actions={actions} challengeId={challenge.id} />}
-            <col->
-              <IdeaList
-                user={user}
-                users={users}
-                ideas={challenge.ideas_submitted}
-                messages={messages}
-                current={challenge}
-                actions={actions}
-              />
+                <CreateMessageForm ideaId={current ? current.id : false} actions={actions} />}
             </col->
             <col->
               <UserList

@@ -12,7 +12,7 @@ use crate::challenge::{
     Challenge,
 };
 
-
+use crate::idea;
 use crate::utils;
 use crate::message;
 
@@ -59,6 +59,10 @@ pub fn handle_get_members(address: HashString) -> ZomeApiResult<Vec<Address>> {
 
 pub fn handle_get_messages(address: HashString) -> ZomeApiResult<utils::GetLinksLoadResult<message::Message>> {
     utils::get_links_and_load_type(&address, "message_in")
+}
+
+pub fn handle_get_ideas(address: HashString) -> ZomeApiResult<utils::GetLinksLoadResult<idea::Idea>> {
+    utils::get_links_and_load_type(&address, "ideas_submitted")
 }
 
 pub fn handle_post_message(challenge_address: HashString, message_spec: message::MessageSpec) -> ZomeApiResult<()> {

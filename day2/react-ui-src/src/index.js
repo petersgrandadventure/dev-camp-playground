@@ -76,6 +76,7 @@ class View extends React.Component {
         this.setState({ challenge, sidebarOpen: false })
         this.actions.getMessages(challenge.id)
         this.actions.getChallengeMembers(challenge.id)
+        this.actions.getChallengeIdeas(challenge.id)
         this.actions.scrollToEnd()
       },
 
@@ -118,6 +119,18 @@ class View extends React.Component {
           })
           this.setState({
             challenge: { ...this.state.challenge, users }
+          })
+        })
+      },
+      getChallengeIdeas: challengeId => {
+        this.makeHolochainCall(`${instanceID}/event/get_ideas`, {
+          challenge_address: challengeId
+        }, (result) => {
+          console.log('retrieved ideas', result)
+          const ideas = result.Ok
+          
+          this.setState({
+            challenge: { ...this.state.challenge, ideas }
           })
         })
       },
@@ -189,6 +202,17 @@ class View extends React.Component {
             users: []
           })
           this.actions.getChallenges()
+        })
+      },
+      createIdea: options => {
+        const ideaSpec = {
+          title: options.title,
+          description: options.description,
+          challenge_address: options.challengeId,
+          initial_members: []
+        }
+        this.makeHolochainCall(`${instanceID}/event/create_idea`, ideaSpec, (result) => {
+          setTimeout(() => this.actions.getChallengeIdeas(options.challengeId), 1000) // hack for now
         })
       },
       getUserProfile: userId => {
@@ -291,16 +315,6 @@ class View extends React.Component {
       <main>
         <section data-open={sidebarOpen}>
           <UserHeader sidebarOpen={sidebarOpen} user={user} setSidebar={this.actions.setSidebar} />
-          {user.id && <CreateEventForm submit={createEvent} />}
-          {user.id && <EventList
-            state={this.state}
-            user={user}
-            users={users}
-            events={events}
-            messages={messages}
-            current={event}
-            actions={this.actions}
-          />}
           {user.id && <CreateChallengeForm submit={this.actions.createChallenge} />}
           {user.id && <ChallengeList
             state={this.state}

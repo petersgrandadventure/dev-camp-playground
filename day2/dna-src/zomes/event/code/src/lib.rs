@@ -99,6 +99,11 @@ define_zome! {
 			outputs: |result: ZomeApiResult<utils::GetLinksLoadResult<idea::Idea>>|,
 			handler: idea::handlers::handle_get_all_ideas
 		}
+		get_ideas: {
+			inputs: |challenge_address: HashString |,
+			outputs: |result: ZomeApiResult<utils::GetLinksLoadResult<idea::Idea>>|,
+			handler: challenge::handlers::handle_get_ideas
+		}
 		get_members: {
 			inputs: |event_address: HashString|,
 			outputs: |result: ZomeApiResult<Vec<Address>>|,
@@ -139,6 +144,7 @@ define_zome! {
 	        	get_all_public_events,
 				get_all_challenges,
 				get_all_ideas,
+				get_ideas,
 	        	get_members,
 	        	get_member_profile,
 	        	get_my_member_profile,
