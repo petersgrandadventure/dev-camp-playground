@@ -123,3 +123,38 @@ scenario.runTape('Can create a challenge with an idea', async (t, {alice}) => {
     t.fail(err.message);
   }
 })
+scenario.runTape('Can post and retrieve messages to challenges and ideas', async (t, {alice}) => {
+  try {
+    const register_result = await alice.callSync('event', 'register', {name: 'alice', avatar_url: ''})
+    console.log(register_result)
+
+    const challenge_address = await alice.callSync('event', 'create_challenge', {...testNewChallengeParams, initial_members: [register_result.Ok]})
+    console.log(challenge_address)
+
+    const idea_address = await alice.callSync('event', 'create_idea', {...testNewIdeaParams, challenge_address: challenge_address.Ok}) 
+    console.log(idea_address);
+
+    const get_result = await alice.callSync('event', 'get_all_challenges', {})
+    console.log(get_result)
+    t.deepEqual(get_result.Ok.length, 1)
+
+    const post_result = await alice.callSync('event', 'post_message', {event_address: challenge_address.Ok, message: testMessage})
+    console.log(post_result)
+    t.notEqual(post_result.Ok, undefined, 'challenge post should return Ok')
+
+    const get_message_result = await alice.callSync('event', 'get_messages', {address: challenge_address.Ok})
+    console.log(get_message_result)
+    t.deepEqual(get_message_result.Ok[0].entry.payload, testMessage.payload, 'expected to receive the challenge message back')
+    
+    const idea_post_result = await alice.callSync('event', 'post_message', {event_address: idea_address.Ok, message: testMessage})
+    console.log(idea_post_result)
+    t.notEqual(idea_post_result.Ok, undefined, 'idea post should return Ok')
+
+    const get_idea_message_result = await alice.callSync('event', 'get_messages', {address: idea_address.Ok})
+    console.log(get_idea_message_result)
+    t.deepEqual(get_idea_message_result.Ok[0].entry.payload, testMessage.payload, 'expected to receive the idea message back')
+
+  } catch (err) {
+    t.fail(err.message);
+  }
+})
