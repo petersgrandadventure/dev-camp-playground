@@ -36,7 +36,7 @@ export const ChallengeList = ({
           renderResult.push(<li
             key={challenge.id}
             disabled={challenge.id === current.id}
-            onClick={e => actions.setEvent(challenge)}
+            onClick={e => actions.setChallenge(challenge)}
           >
             {Icon(challenge.isPrivate ? 'lock' : 'public')}
             <col->
@@ -66,7 +66,7 @@ export const ChallengeList = ({
             </col->
             <col->
               <UserList
-                challenge={current}
+                event={current}
                 current={user.id}
                 users={users}
               />

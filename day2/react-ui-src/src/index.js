@@ -75,7 +75,7 @@ class View extends React.Component {
       setChallenge: challenge => {
         this.setState({ challenge, sidebarOpen: false })
         this.actions.getMessages(challenge.id)
-        this.actions.getEventMembers(challenge.id)
+        this.actions.getChallengeMembers(challenge.id)
         this.actions.scrollToEnd()
       },
 
@@ -101,7 +101,20 @@ class View extends React.Component {
           })
         })
       },
-
+      getChallengeMembers: challengeId => {
+        this.makeHolochainCall(`${instanceID}/event/get_members`, {
+          event_address: challengeId
+        }, (result) => {
+          console.log('retrieved members', result)
+          const users = result.Ok
+          users.forEach(address => {
+            this.actions.getUserProfile(address)
+          })
+          this.setState({
+            challenge: { ...this.state.challenge, users }
+          })
+        })
+      },
       sendMessage: ({ text, eventId }) => {
         const message = {
           message_type: 'text',

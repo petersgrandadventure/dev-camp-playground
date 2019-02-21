@@ -23,6 +23,7 @@ export const CreateChallengeForm = ({ submit }) => {
         })
         e.target[0].value = ''
         e.target[1].value = ''
+        e.target[2].value = ''
       }}
     > <label>Create A New Challenge</label>
       <input placeholder='Title...' className={style.challengeTitle} />
