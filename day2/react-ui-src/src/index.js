@@ -112,6 +112,20 @@ class View extends React.Component {
           this.actions.setChallenge(challenge)
           console.log('left challenge', result)
         })
+      },
+      likeIdea: idea => {
+        console.log('liking idea')
+        this.makeHolochainCall(`${instanceID}/event/join_event`, { event_address: idea.id }, (result) => {
+          this.actions.setIdea(idea)
+          console.log('liked idea', result)
+        })
+      }, 
+      unlikeIdea: idea => {
+        console.log('unliking idea')
+        this.makeHolochainCall(`${instanceID}/event/leave_event`, { event_address: idea.id }, (result) => {
+          this.actions.setIdea(idea)
+          console.log('unliked idea', result)
+        })
       }, 
       getEventMembers: eventId => {
         this.makeHolochainCall(`${instanceID}/event/get_members`, {
@@ -160,10 +174,15 @@ class View extends React.Component {
           challenge_address: challengeId
         }, (result) => {
           console.log('retrieved ideas', result)
-          const ideas = result.Ok
           
+          const ideas = result.Ok.map(({ address, entry }) => ({
+            title: entry.title,
+            description: entry.description,
+            id: address
+          }))
+
           this.setState({
-            challenge: { ...this.state.challenge, ideas }
+            ideas
           })
         })
       },
@@ -363,6 +382,8 @@ class View extends React.Component {
             users={users}
             challenges={challenges}
             messages={messages}
+            idea={idea}
+            ideas={ideas}
             current={challenge}
             actions={this.actions}
           />}

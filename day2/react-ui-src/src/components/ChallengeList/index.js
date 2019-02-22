@@ -23,6 +23,8 @@ export const ChallengeList = ({
   user,
   users,
   messages,
+  idea,
+  ideas,
   current,
   actions
 }) => (
@@ -73,11 +75,11 @@ export const ChallengeList = ({
               {user.id && <CreateIdeaForm actions={actions} challengeId={challenge.id} />}
               <IdeaList
                 state={state}
-                ideas={state.ideas}
+                ideas={ideas}
                 user={user}
                 users={users}
                 messages={messages}
-                current={state.idea}
+                current={idea}
                 actions={actions}
               />
             </col->

@@ -21,12 +21,12 @@ export const IdeaList = ({
   user,
   users,
   messages,
-  current,
+  current = {},
   actions
 }) => (
     <ul className={style.component}>
       {ideas.map(idea => {
-        const attendingCurrent = current.users ? current.users.find(x => x === user.id) : false
+        const attendingCurrent = current && current.users ? current.users.find(x => x === user.id) : false
 
         let renderResult = []
 
@@ -55,21 +55,8 @@ export const IdeaList = ({
             <col->
               <h3>Description</h3>
               <h5>{idea.description}</h5>
-              {attendingCurrent && <MessageList
-                user={user}
-                users={users}
-                messages={messages[idea.id]}
-              />}
-              {attendingCurrent &&
-                <CreateMessageForm ideaId={current ? current.id : false} actions={actions} />}
             </col->
-            <col->
-              <UserList
-                event={current}
-                current={user.id}
-                users={users}
-              />
-            </col->
+            
           </li>)
         }
         return renderResult

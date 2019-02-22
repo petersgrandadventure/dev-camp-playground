@@ -3,14 +3,14 @@ import style from './index.module.css'
 
 export const IdeaHeader = ({
   state: { idea, user },
-  actions: { joinIdea, leaveIdea }
+  actions: { likeIdea, unlikeIdea }
 }) => {
   const attendingCurrent = idea.users ? idea.users.find(x => x === user.id) : false
   return (
     <header className={style.component}>
       {attendingCurrent ?
-        <div>Liked</div>
-        : <div onClick={() => joinIdea(idea)}>Like</div>}
+        <div onClick={() => unlikeIdea(idea)}>Liked</div>
+        : <div onClick={() => likeIdea(idea)}>Like</div>}
       <row->
         <h1>{idea.name && idea.name.replace(user.id, '')}</h1>
       </row->
