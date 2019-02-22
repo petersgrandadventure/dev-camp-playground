@@ -9,8 +9,8 @@ export const ChallengeHeader = ({
   return (
     <header className={style.component}>
       {attendingCurrent ?
-        <div>You're Attending</div>
-        : <div onClick={() => joinChallenge(challenge)}>Attend</div>}
+        <div onClick={()=>leaveChallenge(challenge)}>You're Participating</div>
+        : <div onClick={() => joinChallenge(challenge)}>Participate</div>}
       <row->
         <h1>{challenge.title && challenge.title.replace(user.id, '')}</h1>
       </row->

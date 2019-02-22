@@ -79,7 +79,12 @@ class View extends React.Component {
         this.actions.getChallengeIdeas(challenge.id)
         this.actions.scrollToEnd()
       },
-
+      setIdea: idea => {
+        this.setState({ idea, sidebarOpen: false})
+        this.actions.getMessages(idea.id)
+        this.actions.getIdeaMembers(idea.id)
+        this.actions.scrollToEnd()
+      },
       joinEvent: event => {
         console.log('joining event')
         this.actions.setEvent(event)
@@ -94,6 +99,20 @@ class View extends React.Component {
           console.log('left event', result)
         })
       },
+      joinChallenge: challenge => {
+        console.log('joining challenge')
+        this.makeHolochainCall(`${instanceID}/event/join_event`, { event_address: challenge.id }, (result) => {
+          this.actions.setChallenge(challenge)
+          console.log('joined challenge', result)
+        })
+      },
+      leaveChallenge: challenge => {
+        console.log('leaving challenge')
+        this.makeHolochainCall(`${instanceID}/event/leave_event`, { event_address: challenge.id }, (result) => {
+          this.actions.setChallenge(challenge)
+          console.log('left challenge', result)
+        })
+      }, 
       getEventMembers: eventId => {
         this.makeHolochainCall(`${instanceID}/event/get_members`, {
           event_address: eventId
@@ -119,6 +138,20 @@ class View extends React.Component {
           })
           this.setState({
             challenge: { ...this.state.challenge, users }
+          })
+        })
+      },
+      getIdeaMembers: ideaId => {
+        this.makeHolochainCall(`${instanceID}/event/get_members`, {
+          event_address: ideaId
+        }, (result) => {
+          console.log('retrieved members', result)
+          const users = result.Ok
+          users.forEach(address => {
+            this.actions.getUserProfile(address)
+          })
+          this.setState({
+            idea: { ...this.state.idea, users }
           })
         })
       },
@@ -212,6 +245,12 @@ class View extends React.Component {
           initial_members: []
         }
         this.makeHolochainCall(`${instanceID}/event/create_idea`, ideaSpec, (result) => {
+          this.actions.setIdea({
+            id: result.Ok,
+            title: options.title,
+            description: options.description,
+            users: []
+          }) 
           setTimeout(() => this.actions.getChallengeIdeas(options.challengeId), 1000) // hack for now
         })
       },
@@ -308,6 +347,8 @@ class View extends React.Component {
       connected,
       challenge,
       challenges,
+      idea,
+      ideas
     } = this.state
     const { createEvent, registerUser } = this.actions
 

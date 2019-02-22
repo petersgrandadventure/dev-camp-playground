@@ -1,9 +1,9 @@
 import React from 'react'
 import style from './index.module.css'
 
-export const UserList = ({ event, current, users }) => (
+export const UserList = ({ event, current, users, heading="Attendees" }) => (
   <ul className={style.component}>
-    <h2>Attendees</h2>
+    <h2>{heading}</h2>
     {event.users.map(user => (
       <li
         key={user}

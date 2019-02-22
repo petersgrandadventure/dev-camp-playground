@@ -23,7 +23,7 @@ export const CreateIdeaForm = ({ actions, challengeId }) => {
         e.target[0].value = ''
         e.target[1].value = ''
       }}
-    > <label>Create A New Idea</label>
+    > <h2>Submit Your Idea</h2>
       <input placeholder='Title...' className={style.ideaTitle} />
       <input placeholder='Description...' />
       <button type='submit'>

@@ -23,7 +23,6 @@ export const ChallengeList = ({
   user,
   users,
   messages,
-  ideas,
   current,
   actions
 }) => (
@@ -59,32 +58,30 @@ export const ChallengeList = ({
             <col->
               <h3>Description</h3>
               <h5>{challenge.description}</h5>
-              {attendingCurrent && <MessageList
-                user={user}
-                users={users}
-                messages={messages[challenge.id]}
-              />}
-              {attendingCurrent &&
-                <CreateMessageForm challengeId={current ? current.id : false} actions={actions} />}
-            </col->
-            {user.id && <CreateIdeaForm actions={actions} challengeId={challenge.id} />}
-            <col->
-              <IdeaList
-                user={user}
-                users={users}
-                ideas={challenge.ideas_submitted}
-                messages={messages}
-                current={challenge}
-                actions={actions}
-              />
             </col->
             <col->
               <UserList
                 event={current}
                 current={user.id}
                 users={users}
+                heading="Participants"
+              />
+            </col-> 
+            </li>)
+          renderResult.push(<li key={'ideaPanel' + challenge.id} className={style.openEvent}>
+            <col->
+              {user.id && <CreateIdeaForm actions={actions} challengeId={challenge.id} />}
+              <IdeaList
+                state={state}
+                ideas={state.ideas}
+                user={user}
+                users={users}
+                messages={messages}
+                current={state.idea}
+                actions={actions}
               />
             </col->
+            
           </li>)
         }
         return renderResult
