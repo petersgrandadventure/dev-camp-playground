@@ -1,4 +1,4 @@
-# Holochain Events Goer 4000
+# Holochain Idea Machine 4000
 
 A simple event app designed to get new users up, running and developing on Holochain
 
