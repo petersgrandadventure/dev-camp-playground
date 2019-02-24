@@ -12,7 +12,7 @@ export const IdeaHeader = ({
         <div onClick={() => unlikeIdea(idea)}>Liked</div>
         : <div onClick={() => likeIdea(idea)}>Like</div>}
       <row->
-        <h1>{idea.name && idea.name.replace(user.id, '')}</h1>
+        <h1>{idea.title && idea.title.replace(user.id, '')}</h1>
       </row->
       {idea.users && (
         <div>

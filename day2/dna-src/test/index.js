@@ -170,3 +170,34 @@ scenario.runTape('Can post and retrieve messages to challenges and ideas', async
     t.fail(err.message);
   }
 })
+
+scenario.runTape('Can create an idea that can be liked and unliked', async (t, {alice}) => {
+  try {
+  const register_result = await alice.callSync('event', 'register', {name: 'alice', avatar_url: ''})
+  console.log(register_result)
+
+  const challenge_address = await alice.callSync('event', 'create_challenge', {...testNewChallengeParams, initial_members: [register_result.Ok]})
+  console.log(challenge_address)
+
+  const idea_address = await alice.callSync('event', 'create_idea', {...testNewIdeaParams, challenge_address: challenge_address.Ok}) 
+  console.log(idea_address);
+
+  const like_result = await alice.callSync('event', 'like_idea', {idea_address: idea_address.Ok})
+  console.log(like_result)
+
+  const get_likes_result = await alice.callSync('event', 'get_likes', {idea_address: idea_address.Ok})
+  console.log('liked by:', get_likes_result)
+  let allMemberAddrs = get_likes_result.Ok
+  t.true(allMemberAddrs.length > 0, 'gets at least one like')
+
+  const leave_result = await alice.callSync('event', 'unlike_idea', {idea_address: idea_address.Ok})
+  console.log(leave_result)
+
+  const get_likes_result_post_leaving = await alice.callSync('event', 'get_likes', {idea_address: idea_address.Ok})
+  console.log('liked by post leaving:', get_likes_result_post_leaving)
+  let allMemberAddrsPost = get_likes_result_post_leaving.Ok
+  t.true(allMemberAddrsPost.length == 0, 'has no members!')
+  } catch (err) {
+    t.fail(err.message);
+  }
+})

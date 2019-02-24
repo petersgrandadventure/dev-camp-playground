@@ -16,7 +16,7 @@
 .component > li {
   flex: none;
   display: flex;
-  padding: 4rem 1rem;
+  padding: 1rem 1rem;
   list-style: none;
   font-weight: bold;
   user-select: none;

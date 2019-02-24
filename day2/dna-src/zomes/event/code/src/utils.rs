@@ -78,3 +78,9 @@ pub fn link_entries_bidir<S: Into<String>>(a: &HashString, b: &HashString, tag_a
     hdk::link_entries(b, a, tag_b_a)?;
     Ok(())
 }
+
+pub fn unlink_entries_bidir<S: Into<String>>(a: &HashString, b: &HashString, tag_a_b: &str, tag_b_a: S) -> ZomeApiResult<()> {
+    hdk::remove_link(a, b, tag_a_b)?;
+	hdk::remove_link(b, a, tag_b_a)?;
+    Ok(())
+}

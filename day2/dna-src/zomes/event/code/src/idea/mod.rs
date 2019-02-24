@@ -61,7 +61,7 @@ pub fn idea_definition() -> ValidatingEntryType {
             ),
             to!(
                 "%agent_id",
-                tag: "has_member",
+                tag: "liked_by",
 
                 validation_package: || {
                     hdk::ValidationPackageDefinition::Entry
@@ -73,7 +73,7 @@ pub fn idea_definition() -> ValidatingEntryType {
             ),
             from!(
                 "%agent_id",
-                tag: "member_of",
+                tag: "likes",
 
                 validation_package: || {
                     hdk::ValidationPackageDefinition::Entry

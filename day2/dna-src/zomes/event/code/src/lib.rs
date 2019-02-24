@@ -79,10 +79,20 @@ define_zome! {
 		    outputs: |result: ZomeApiResult<()>|,
 		    handler: challenge::handlers::handle_join_challenge
 		}
-		join_idea: {
+		like_idea: {
 		    inputs: |idea_address: HashString|,
 		    outputs: |result: ZomeApiResult<()>|,
-		    handler: idea::handlers::handle_join_idea
+		    handler: idea::handlers::handle_like_idea
+		}
+		unlike_idea: {
+		    inputs: |idea_address: HashString|,
+		    outputs: |result: ZomeApiResult<()>|,
+		    handler: idea::handlers::handle_unlike_idea
+		}
+		get_likes: {
+		    inputs: |idea_address: HashString|,
+		    outputs: |result: ZomeApiResult<Vec<Address>>|,
+		    handler: idea::handlers::handle_get_likes
 		}
 		get_all_public_events: {
 			inputs: | |,
@@ -140,7 +150,9 @@ define_zome! {
 	        	join_event,
 				leave_event,
 				join_challenge,
-				join_idea,
+				like_idea,
+				unlike_idea,
+				get_likes,
 	        	get_all_public_events,
 				get_all_challenges,
 				get_all_ideas,
