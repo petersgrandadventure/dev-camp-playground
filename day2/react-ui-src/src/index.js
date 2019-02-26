@@ -82,7 +82,7 @@ class View extends React.Component {
       setIdea: idea => {
         this.setState({ idea, sidebarOpen: false})
         this.actions.getMessages(idea.id)
-        this.actions.getIdeaMembers(idea.id)
+        this.actions.getLikes(idea.id)
         this.actions.scrollToEnd()
       },
       joinEvent: event => {
@@ -115,14 +115,14 @@ class View extends React.Component {
       },
       likeIdea: idea => {
         console.log('liking idea')
-        this.makeHolochainCall(`${instanceID}/event/join_event`, { event_address: idea.id }, (result) => {
+        this.makeHolochainCall(`${instanceID}/event/like_idea`, { idea_address: idea.id }, (result) => {
           this.actions.setIdea(idea)
           console.log('liked idea', result)
         })
       }, 
       unlikeIdea: idea => {
         console.log('unliking idea')
-        this.makeHolochainCall(`${instanceID}/event/leave_event`, { event_address: idea.id }, (result) => {
+        this.makeHolochainCall(`${instanceID}/event/unlike_idea`, { idea_address: idea.id }, (result) => {
           this.actions.setIdea(idea)
           console.log('unliked idea', result)
         })
@@ -155,11 +155,11 @@ class View extends React.Component {
           })
         })
       },
-      getIdeaMembers: ideaId => {
-        this.makeHolochainCall(`${instanceID}/event/get_members`, {
-          event_address: ideaId
+      getLikes: ideaId => {
+        this.makeHolochainCall(`${instanceID}/event/get_likes`, {
+          idea_address: ideaId
         }, (result) => {
-          console.log('retrieved members', result)
+          console.log('retrieved likes', result)
           const users = result.Ok
           users.forEach(address => {
             this.actions.getUserProfile(address)
